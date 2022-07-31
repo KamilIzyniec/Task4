@@ -1,0 +1,160 @@
+﻿@model List<Task4.Models.UserModel>;
+
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+</head>
+
+<script>
+    function blockUser(){
+        var checkboxids = "";
+        var markedCheckbox = document.getElementsByName('ids');
+        for (var checkbox of markedCheckbox) {
+            if (checkbox.checked)
+                checkboxids += (checkbox.value + ',');
+        }
+        var data = JSON.stringify(checkboxids);
+            $.ajax({
+                type: 'POST',
+                url: '/adminpanel/blockuser',
+                contentType: 'application/json; charset=utf-8',
+                data: data,
+                success: function (result) {
+                    console.log(result);
+                    window.location.reload(true);
+                },
+                error: function () {
+                    console.log('Failed ');
+                }
+            })
+        
+        }
+
+</script>
+<script>
+    function unblockUser() {
+        var checkboxids = "";
+        var markedCheckbox = document.getElementsByName('ids');
+        for (var checkbox of markedCheckbox) {
+            if (checkbox.checked)
+                checkboxids += (checkbox.value + ',');
+        }
+        var data = JSON.stringify(checkboxids);
+        $.ajax({
+            type: 'POST',
+            url: '/adminpanel/unblockuser',
+            contentType: 'application/json; charset=utf-8',
+            data: data,
+            success: function (result) {
+                console.log(result);
+                window.location.reload(true);
+            },
+            error: function () {
+                console.log('Failed ');
+            }
+        })
+        
+    }
+
+</script>
+<script>
+    function deleteUser() {
+        var checkboxids = "";
+        var markedCheckbox = document.getElementsByName('ids');
+        for (var checkbox of markedCheckbox) {
+            if (checkbox.checked)
+                checkboxids += (checkbox.value + ',');
+        }
+        var data = JSON.stringify(checkboxids);
+        $.ajax({
+            type: 'POST',
+            url: '/adminpanel/deleteuser',
+            contentType: 'application/json; charset=utf-8',
+            data: data,
+            success: function (result) {
+                console.log(result);
+                window.location.reload(true);
+            },
+            error: function () {
+                console.log('Failed ');
+            }
+        })
+        
+    }
+
+</script>
+
+<div>
+
+    <button style="background-color:red" type="button" onclick="blockUser()" />BLOCK USERS
+    <button class="bi bi-unlock-fill" onclick="unblockUser()" runat="server" />
+    <button class="bi bi-trash-fill" onclick="deleteUser()" runat="server" />
+</div>
+
+<div id="tableSection">
+
+
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+    </style>
+    <table border="1">
+
+        <tr>
+            <th><input checkbox type="checkbox" id="Parent" onchange="Checkallcheckbox(this)" runat="server" /></th>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Last Login</th>
+            <th>Registration</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+
+            @foreach (var u in Model)
+            {
+            <tr>
+                <td><input checkbox type="checkbox" name="ids" value=@u.Id class="CheckChild" runat="server" /></td>
+                <td>@Html.DisplayFor(modelItem => u.Id)</td>
+                <td>@Html.DisplayFor(modelItem => u.UserName)</td>
+                <td>@Html.DisplayFor(modelItem => u.Email)</td>
+                <td>@Html.DisplayFor(modelItem => u.LastLoginTime)</td>
+                <td>@Html.DisplayFor(modelItem => u.RegistrationTime)</td>
+                @{ if (u.ActiveStatus == true)
+                    {
+                        <td>ACTIVE</td>
+                        ;
+                    }
+                    else
+                    {
+                        <td>BLOCKED</td>
+                        ;
+                    } }
+            </tr>
+        }
+
+        </table>
+
+    </div>
+
+    <script>
+        function Checkallcheckbox(currentClickedCheckbox) {
+            var sectionChks = $('#tableSection').find(':checkbox');
+
+            if ($(currentClickedCheckbox).is(':checked')) {
+                sectionChks.prop('checked', true);
+            } else {
+                sectionChks.prop('checked', false);
+            }
+        }</script>
+    
+    
